@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import Web3Modal from "web3Modal";
+import Web3Modal from "web3modal";
 
 type SignerContextType = {
   signer?: JsonRpcSigner;
