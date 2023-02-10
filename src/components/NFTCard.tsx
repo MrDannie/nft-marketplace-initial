@@ -1,7 +1,9 @@
 import classNames from "classnames";
 import { BigNumber } from "ethers";
 import { useEffect, useState } from "react";
+import useNFTMarket from "state/nft-market";
 import { NFT } from "state/nft-market/interfaces";
+import useSigner from "state/signer";
 import { ipfsToHTTPS } from "../helpers";
 import AddressAvatar from "./AddressAvatar";
 import SellPopup from "./SellPopup";
@@ -19,7 +21,8 @@ type NFTCardProps = {
 
 const NFTCard = (props: NFTCardProps) => {
   const { nft, className } = props;
-  const address = "";
+  const { address } = useSigner();
+  const { listNFT, cancelListing, buyNFT } = useNFTMarket();
   const [meta, setMeta] = useState<NFTMetadata>();
   const [loading, setLoading] = useState(false);
   const [sellPopupOpen, setSellPopupOpen] = useState(false);
@@ -53,15 +56,36 @@ const NFTCard = (props: NFTCardProps) => {
   };
 
   const onBuyClicked = async () => {
-    // TODO: buy NFT
+    setLoading(true);
+    try {
+      await buyNFT(nft);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
   };
 
   const onCancelClicked = async () => {
-    // TODO: cancel listing
+    console.log("herere");
+
+    setLoading(true);
+    try {
+      await cancelListing(nft.id);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
   };
 
   const onSellConfirmed = async (price: BigNumber) => {
-    // TODO: list NFT
+    setSellPopupOpen(false);
+    setLoading(true);
+    try {
+      await listNFT(nft.id, price);
+    } catch (error) {
+      console.log(error);
+    }
+    setLoading(false);
   };
 
   const forSale = nft.price != "0";
